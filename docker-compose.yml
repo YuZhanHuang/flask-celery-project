@@ -13,6 +13,8 @@ services:
       - 5010:5000
     environment:
       - FLASK_APP=app
+    env_file:
+      - .env/.dev-sample
     depends_on:
       - redis
       - db
@@ -48,7 +50,7 @@ services:
     image: flask_celery_example_celery_beat
     command: /start-celerybeat
     volumes:
-      - .:app
+      - .:/app
     env_file:
       - .env/.dev-sample
     environment:

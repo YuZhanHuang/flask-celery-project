@@ -1,15 +1,8 @@
-from celery import Celery
 from project import create_app, ext_celery
 
 
 app = create_app()
 celery = ext_celery.celery
-
-# celery = Celery(
-#     __name__,
-#     broker='redis://127.0.0.1:6379/0',
-#     backend='redis://127.0.0.1:6379/0',
-# )
 
 
 @app.route('/')
@@ -17,9 +10,14 @@ def hello():
     return 'Hello World'
 
 
-# @celery.task
-# def divide(x, y):
-#     import time
-#     time.sleep(5)
-#     return x / y
+@app.cli.command('celery_worker')
+def celery_worker():
+    from watchgod import run_process
+    import subprocess
 
+    def run_worker():
+        subprocess.call(
+            ["celery", "-A", "app.celery", "worker", "--loglevel=info"]
+        )
+
+    run_process('./project', run_worker)
