@@ -17,6 +17,7 @@ class BaseConfig:
         'SOCKETIO_MESSAGE_QUEUE',
         'redis://127.0.0.1:6379/0'
     )
+    UPLOADS_DEFAULT_DEST = str(BASE_DIR / 'upload')
 
 
 class DevelopmentConfig(BaseConfig):
@@ -29,7 +30,16 @@ class ProductionConfig(BaseConfig):
     DEBUG = False
 
 
+class TestingConfig(BaseConfig):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SOCKETIO_MESSAGE_QUEUE = None
+    SECRET_KEY = 'my secret'
+    WTF_CSRF_ENABLED = False
+
+
 config = {
     'production': ProductionConfig,
     'development': DevelopmentConfig,
+    'testing': TestingConfig,
 }

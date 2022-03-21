@@ -34,6 +34,11 @@ services:
       dockerfile: ./compose/local/flask/Dockerfile
     image: flask_celery_example_celery_worker
     command: /start-celeryworker
+#    logging:
+#      driver: syslog
+#      options:
+#        syslog-address: "tcp+tls://HOST.papertrailapp.com:PORT"
+#        tag: "{{.Name}}/{{.ID}}"
     volumes:
       - .:/app
     env_file:

@@ -6,7 +6,14 @@ from flask import jsonify, render_template, request, current_app
 from . import users_blueprint
 from project.users.forms import YourForm
 from project.users.tasks import sample_task, task_process_notification
-from project import csrf
+from project import csrf, db
+from project.users.tasks import (
+    sample_task,
+    task_add_subscribe,
+    task_process_notification,
+    task_send_welcome_email,
+)
+from .models import User
 
 
 def api_call(email):
@@ -77,4 +84,29 @@ def subscribe_ws():
     return render_template('form_ws.html', form=form)
 
 
-    ...
+@users_blueprint.route('/user_subscribe/', methods=('GET', 'POST'))
+def user_subscribe():
+    form = YourForm()
+    if form.validate_on_submit():
+        try:
+            user = db.session.query(User).filter_by(
+                username=form.username.data
+            ).first()
+            if user:
+                user_id = user.id
+            else:
+                user = User(
+                    username=form.username.data,
+                    email=form.email.data,
+                )
+                db.session.add(user)
+                db.session.commit()
+                user_id = user.user_id
+        except Exception as e:
+            db.session.rollback()
+            raise
+
+        task_add_subscribe.delay(user_id)
+        return 'sent task to Celery successfully'
+
+    return render_template('user_subscribe.html', form=form)
