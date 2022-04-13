@@ -5,6 +5,7 @@ import logging.config
 import requests
 from celery import shared_task
 from celery.signals import task_postrun, setup_logging, after_setup_logger
+from project.celery_utils import custom_celery_task
 from celery.utils.log import get_task_logger
 
 logger = get_task_logger(__name__)
@@ -26,16 +27,13 @@ def sample_task(email):
     api_call(email)
 
 
-@shared_task(bind=True)
-def task_process_notification(self):
-    try:
-        if not random.choice([0, 1]):
-            raise Exception()
-        requests.post('https://httpbin.org/delay/5')
+@custom_celery_task(max_retries=3)
+def task_process_notification():
+    if not random.choice([0, 1]):
+        # mimic random error
+        raise Exception()
 
-    except Exception as e:
-        logger.error('exception raised, it would be retry after 5 seconds')
-        raise self.retry(exc=e, countdown=5)
+    requests.post('https://httpbin.org/delay/5')
 
 
 @task_postrun.connect
