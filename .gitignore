@@ -1,6 +1,12 @@
 # pycharm
 .idea
 celerybeat-schedule
+celery.log
+
+# coverage
+.coverage
+.coveragerc
+.pytest_cache
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
