@@ -9,8 +9,8 @@ psycopg2-binary==2.9.1
 watchgod==0.7
 Flask-WTF==0.15.1
 requests==2.26.0
-flask-socketio==5.0.1
-eventlet==0.30.2
+flask-socketio==5.1.1
+eventlet==0.33.0
 pytest==6.2.4
 pytest-flask==1.2.0
 factory-boy==3.2.0
